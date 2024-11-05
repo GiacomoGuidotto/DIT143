@@ -40,10 +40,10 @@ power2 n k
 -- D -------------------------
 {-
     Test cases:
-    case 1: power 2 3 = 8
-    case 2: power 3 2 = 9
-    case 3: power 4 0 = 1
-    case 4: power 0 4 = 0
+    case 1: power 2 3 = 8 --Reason: To test a basic positive integer exponent so that it establishes a baseline for correct functionality.
+    case 2: power 3 2 = 9 --Reason: Similar to case 1
+    case 3: power 4 0 = 1 --Reason: To test that that any non-zero number raised to the power of 0 is equal to 1
+    case 4: power 0 4 = 0 --Reason: To test the property that 0 raised to any positive exponent is 0
  -}
 
 --
