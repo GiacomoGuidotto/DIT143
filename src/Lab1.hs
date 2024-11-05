@@ -1,5 +1,5 @@
 module Lab1 where
-
+import Test.QuickCheck
 {- Lab 1
    Date: 2024-10-05
    Authors: Bharath Ravichandran, Giacomo Guidotto
