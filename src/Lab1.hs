@@ -61,4 +61,5 @@ powerTest =
     ]
 
 --
-prop_powers' = undefined
+prop_powers' :: Integer -> Integer -> Property
+prop_powers' n k = k >= 0 ==> power n k == power1 n k && power1 n k == power2 n k

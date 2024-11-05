@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Lab1
+import Test.QuickCheck
 
 main :: IO ()
-main = print powerTest
+main = quickCheck prop_powers'
