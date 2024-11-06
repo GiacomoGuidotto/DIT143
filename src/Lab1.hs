@@ -1,5 +1,5 @@
 module Lab1 where
-import Test.QuickCheck
+
 {- Lab 1
    Date: 2024-10-05
    Authors: Bharath Ravichandran, Giacomo Guidotto
@@ -61,5 +61,5 @@ powerTest =
     ]
 
 --
-prop_powers' :: Integer -> Integer -> Property
-prop_powers' n k = k >= 0 ==> power n k == power1 n k && power1 n k == power2 n k
+prop_powers' :: Integer -> Integer -> Bool
+prop_powers' n k = power n (abs k) == power1 n (abs k) && power1 n (abs k) == power2 n (abs k)
