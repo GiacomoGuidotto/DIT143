@@ -1,8 +1,6 @@
 module Main (main) where
 
-import Lab2.Cards
-import Lab2.RunGame
-import Test.QuickCheck
+import Lab2.BlackJack
 
 main :: IO ()
-main = undefined
+main = print sizeSteps
