@@ -7,9 +7,9 @@ module Lab1.Lab1 where
  -}
 --------------------------------------------
 power :: Integer -> Integer -> Integer
-power n k
+power _ k
   | k < 0 = error "power: negative argument"
-power n 0 = 1
+power _ 0 = 1
 power n k = n * power n (k - 1)
 
 -- A ------------------------
@@ -17,7 +17,7 @@ power n k = n * power n (k - 1)
 -- power n k takes to compute
 
 stepsPower :: Integer -> Integer -> Integer
-stepsPower n k = k + 1
+stepsPower _ k = k + 1
 
 -- B -------------------------
 -- power1
@@ -32,7 +32,7 @@ power1' n k = product [n | _ <- [1 .. k]]
 -- power2
 
 power2 :: Integer -> Integer -> Integer
-power2 n 0 = 1
+power2 _ 0 = 1
 power2 n k
   | even k = power2 (n * n) (div k 2)
   | otherwise = n * power2 n (k - 1)
