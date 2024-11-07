@@ -45,7 +45,7 @@ maintainer:         giacomo.guidotto@gmail.com
 build-type:         Simple
 
 -- Extra doc files to be distributed with the package, such as a CHANGELOG or a README.
-extra-doc-files:    CHANGELOG.md
+extra-doc-files:    CHANGELOG.md, README.md
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
@@ -58,10 +58,13 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Playground, Lab1.Lab1
+    exposed-modules:  Playground,
+                      Lab1.Lab1,
+                      Lab2.Cards,
+                      Lab2.RunGame
 
     -- Modules included in this library but not exported.
-    other-modules: Lab2.Cards, Lab2.RunGame
+    -- other-modules:
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -112,5 +115,16 @@ test-suite lab1-test
     main-is:          Lab1Test.hs
     build-depends:
         base ^>=4.17.2.1,
+        QuickCheck >= 2.14,
+        DIT143
+
+test-suite lab2-test
+    import:           warnings
+    default-language: Haskell2010
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Lab2Test.hs
+    build-depends:
+        base ^>= 4.17.2.1,
         QuickCheck >= 2.14,
         DIT143

@@ -1,8 +1,14 @@
-# DIT143
+# DIT143 - Functional Programming
 
 ## Getting started
 
-use cabal to run different test suites
+use cabal to build the project
+
+```bash
+cabal build
+```
+
+run different test suites with
 
 ```bash
 cabal run [test-suite-name]

@@ -1,7 +1,8 @@
 module Main (main) where
 
-import Lab1.Lab1
+import Lab2.Cards
+import Lab2.RunGame
 import Test.QuickCheck
 
 main :: IO ()
-main = quickCheck prop_powers'
+main = undefined
