@@ -1,4 +1,4 @@
-module Lab1 where
+module Lab1.Lab1 where
 
 {- Lab 1
    Date: 2024-10-05

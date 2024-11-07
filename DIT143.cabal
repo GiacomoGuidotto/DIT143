@@ -58,16 +58,17 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Playground, Lab1
+    exposed-modules:  Playground, Lab1.Lab1
 
     -- Modules included in this library but not exported.
-    -- other-modules:
+    other-modules: Lab2.Cards, Lab2.RunGame
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.17.2.1,
+                      random ^>=1.2,
                       QuickCheck >= 2.14
 
     -- Directories containing source files.
