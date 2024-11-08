@@ -1,4 +1,12 @@
-module Lab2.BlackJack (hand2, sizeSteps, display, value) where
+module Lab2.BlackJack
+  ( hand2,
+    sizeSteps,
+    display,
+    value,
+    gameOver,
+    winner,
+  )
+where
 
 import Lab2.Cards
 import Lab2.RunGame
@@ -21,7 +29,7 @@ sizeSteps =
     2
   ]
 
--- | Displaying function ----------------------------------------------
+-- | A1. Displaying function -----------------------------------------
 
 -- | Display the rank of a card, removing the constructor
 displayRank :: Rank -> String
@@ -44,7 +52,7 @@ display :: Hand -> String
 display Empty = ""
 display (Add c h) = displayCard c ++ "\n" ++ display h
 
--- | Value function --------------------------------------------------
+-- | A2. Value function ----------------------------------------------
 
 -- | Compute the value of a rank with aces counting for 1
 valueRank :: Rank -> Integer
@@ -68,3 +76,19 @@ value h =
    in v + 10 * extra
   where
     (v, a) = initalValue h
+
+-- | A3. Game over function -----------------------------------------
+
+-- | Check if the player is bust
+gameOver :: Hand -> Bool
+gameOver h = value h > 21
+
+-- | A4. Winner function ---------------------------------------------
+
+-- | Compute the winner of the game
+winner :: Hand -> Hand -> Player
+winner g b
+  | gameOver g = Bank
+  | gameOver b = Guest
+  | value g > value b = Guest
+  | otherwise = Bank

@@ -3,24 +3,27 @@ module Main (main) where
 import Lab2.BlackJack
 import Lab2.Cards
 
-hand1 :: Hand
-hand1 =
+winningHand :: Hand
+winningHand =
   Add
     (Card Ace Hearts)
-    (Add (Card Ace Spades) Empty)
+    (Add (Card Jack Spades) Empty)
 
 testHand :: Hand -> IO ()
 testHand h = do
   putStr (display h)
-  putStr " value: "
+  putStr "- value: "
   print (value h)
-  putStr "\n"
+  putStr "- gameOver: "
+  print (gameOver h)
 
 main :: IO ()
 main = do
   putStr "sizeSteps:\n"
   print sizeSteps
-  putStr "hand1:\n"
-  testHand hand1
-  putStr "hand2:\n"
+  putStr "\nwinningHand:\n"
+  testHand winningHand
+  putStr "\nhand2:\n"
   testHand hand2
+  putStr "\nwinner: "
+  print (winner hand2 winningHand)
