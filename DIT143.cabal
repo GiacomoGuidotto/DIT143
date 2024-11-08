@@ -60,11 +60,11 @@ library
     -- Modules exported by the library.
     exposed-modules:  Playground,
                       Lab1.Lab1,
-                      Lab2.BlackJack
+                      Lab2.BlackJack,
+                      Lab2.Cards,
 
     -- Modules included in this library but not exported.
-    other-modules: Lab2.Cards,
-                   Lab2.RunGame
+    other-modules:    Lab2.RunGame
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
