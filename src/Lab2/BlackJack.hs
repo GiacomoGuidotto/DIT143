@@ -70,7 +70,7 @@ display (Add c h) = displayCard c ++ "\n" ++ display h
 -- | Compute the value of a rank with aces counting for 1
 valueRank :: Rank -> Integer
 valueRank (Numeric n) = n
-valueRank Ace = 1
+valueRank Ace = 11
 valueRank _ = 10
 
 -- | Compute the value of a hand and count the number of aces
@@ -81,14 +81,16 @@ initalValue (Add c h) = (valueRank (rank c) + v, ace + a)
     (v, a) = initalValue h
     ace = if rank c == Ace then 1 else 0
 
+adjustForAces :: (Integer, Integer) -> Integer
+adjustForAces (v, a)
+  | v <= 21 = v
+  | a == 0 = v
+  | otherwise = adjustForAces (v - 10, a - 1)
+
 -- | Compute the value of a hand and adjust the value if the hand
 -- contains aces
 value :: Hand -> Integer
-value h =
-  if a > 0 then v + 10 * extra else v
-  where
-    extra = min a ((21 - v) `div` 10)
-    (v, a) = initalValue h
+value h = adjustForAces (initalValue h)
 
 -- | A3. Game over function -----------------------------------------
 
