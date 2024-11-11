@@ -85,9 +85,9 @@ initalValue (Add c h) = (valueRank (rank c) + v, ace + a)
 -- contains aces
 value :: Hand -> Integer
 value h =
-  let extra = min a ((21 - v) `div` 10)
-   in v + 10 * extra
+  if a > 0 then v + 10 * extra else v
   where
+    extra = min a ((21 - v) `div` 10)
     (v, a) = initalValue h
 
 -- | A3. Game over function -----------------------------------------
