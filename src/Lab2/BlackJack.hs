@@ -5,14 +5,22 @@ module Lab2.BlackJack
     value,
     gameOver,
     winner,
+    fullDeck,
+    draw,
+    playBank,
+    shuffleDeck,
     prop_onTopOf_assoc,
     prop_size_onTopOf,
-    fullDeck,
+    prop_shuffle_sameCards,
+    prop_size_shuffle,
+    implementation,
+    main,
   )
 where
 
 import Lab2.Cards
 import Lab2.RunGame
+import System.Random
 
 -- | Computing the steps of the size function for an example hand
 hand2 :: Hand
@@ -85,7 +93,7 @@ value h =
 gameOver :: Hand -> Bool
 gameOver h = value h > 21
 
--- | A4. Winner function ---------------------------------------------
+-- | A4. Winner function --------------------------------------------
 
 -- | Compute the winner of the game
 winner :: Hand -> Hand -> Player
@@ -118,3 +126,76 @@ fullDeck = foldr Add Empty [Card r s | s <- suits, r <- ranks]
   where
     ranks = [Numeric n | n <- [2 .. 10]] ++ [Jack, Queen, King, Ace]
     suits = [Hearts, Spades, Diamonds, Clubs]
+
+-- | B3. Draw function ----------------------------------------------
+
+-- | Draw a card from the deck and put it in the hand
+-- params: deck, hand
+-- return: (deck, hand)
+draw :: Hand -> Hand -> (Hand, Hand)
+draw Empty _ = error "draw: The deck is empty"
+draw (Add c d) h = (d, Add c h)
+
+-- | B4. Play bank function -----------------------------------------
+
+-- | Play the bank from the deck
+-- params: deck
+-- return: bank hand
+playBank :: Hand -> Hand
+playBank d = playBankHelper d Empty
+
+playBankHelper :: Hand -> Hand -> Hand
+playBankHelper d b
+  | value b >= 16 = b
+  | otherwise = playBankHelper d' b'
+  where
+    (d', b') = draw d b
+
+-- | B5. Shuffle function -------------------------------------------
+
+-- | Remove the nth card from the hand
+removeCard :: Integer -> Hand -> (Hand, Card)
+removeCard _ Empty = error "removeCard: The hand is empty"
+removeCard n (Add c h)
+  | n == 0 = (h, c)
+  | otherwise = let (h', c') = removeCard (n - 1) h in (Add c h', c')
+
+-- | Shuffle the deck
+shuffleDeck :: StdGen -> Hand -> Hand
+shuffleDeck _ Empty = Empty
+shuffleDeck g h = Add c (shuffleDeck g' h')
+  where
+    (n, g') = randomR (0, size h - 1) g
+    (h', c) = removeCard n h
+
+-- | Check if a card belongs to a hand
+belongsTo :: Card -> Hand -> Bool
+_ `belongsTo` Empty = False
+c `belongsTo` (Add c' h) = c == c' || c `belongsTo` h
+
+prop_shuffle_sameCards :: StdGen -> Card -> Hand -> Bool
+prop_shuffle_sameCards g c h =
+  c `belongsTo` h == c `belongsTo` shuffleDeck g h
+
+prop_size_shuffle :: StdGen -> Hand -> Bool
+prop_size_shuffle g h =
+  (size h :: Integer) == (size (shuffleDeck g h) :: Integer)
+
+-- | Game interface -------------------------------------------------
+
+-- | The implementation of the game interface
+implementation :: Interface
+implementation =
+  Interface
+    { iFullDeck = fullDeck,
+      iValue = value,
+      iDisplay = display,
+      iGameOver = gameOver,
+      iWinner = winner,
+      iDraw = draw,
+      iPlayBank = playBank,
+      iShuffle = shuffleDeck
+    }
+
+main :: IO ()
+main = runGame implementation

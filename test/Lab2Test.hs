@@ -34,3 +34,5 @@ main = do
   putStrLn "=== QuickCheck Tests ==="
   quickCheck prop_onTopOf_assoc
   quickCheck prop_size_onTopOf
+  quickCheck prop_shuffle_sameCards
+  quickCheck prop_size_shuffle

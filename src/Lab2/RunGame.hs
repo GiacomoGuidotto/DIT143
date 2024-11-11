@@ -41,7 +41,7 @@ gameLoop i deck guest = do
             ++ "card? [y] "
         )
       yn <- getLine
-      if null yn || not (map toLower yn == "n")
+      if null yn || (map toLower yn /= "n")
         then do
           let (deck', guest') = iDraw i deck guest
           gameLoop i deck' guest'

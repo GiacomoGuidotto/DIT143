@@ -2,13 +2,13 @@
 
 ## Getting started
 
-use cabal to build the project
+use cabal to build the project:
 
 ```bash
 cabal build
 ```
 
-run different test suites with
+run different test suites or executables with:
 
 ```bash
 cabal run [test-suite-name]
@@ -18,3 +18,7 @@ cabal run [test-suite-name]
 
 - `playground-test` - test suite for playground
 - `lab1-test` - test suite for lab1
+- `lab2-test` - test suite for lab2
+
+## Executables
+- `blackjack` - executable for blackjack game
