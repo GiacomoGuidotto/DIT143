@@ -5,12 +5,14 @@ module Lab2.BlackJack
     value,
     gameOver,
     winner,
+    prop_onTopOf_assoc,
+    prop_size_onTopOf,
+    fullDeck,
   )
 where
 
 import Lab2.Cards
 import Lab2.RunGame
-import Test.QuickCheck
 
 -- | Computing the steps of the size function for an example hand
 hand2 :: Hand
@@ -92,3 +94,27 @@ winner g b
   | gameOver b = Guest
   | value g > value b = Guest
   | otherwise = Bank
+
+-- | B1. Put on Top function ----------------------------------------
+
+-- | Put the first hand on top of the second hand
+(<+) :: Hand -> Hand -> Hand
+Empty <+ h = h
+(Add c h1) <+ h2 = Add c (h1 <+ h2)
+
+prop_onTopOf_assoc :: Hand -> Hand -> Hand -> Bool
+prop_onTopOf_assoc p1 p2 p3 =
+  p1 <+ (p2 <+ p3) == (p1 <+ p2) <+ p3
+
+prop_size_onTopOf :: Hand -> Hand -> Bool
+prop_size_onTopOf h1 h2 =
+  (size (h1 <+ h2) :: Integer) == (size h1 + size h2 :: Integer)
+
+-- | B2. Full deck function -----------------------------------------
+
+-- | Compute a full deck of cards
+fullDeck :: Hand
+fullDeck = foldr Add Empty [Card r s | s <- suits, r <- ranks]
+  where
+    ranks = [Numeric n | n <- [2 .. 10]] ++ [Jack, Queen, King, Ace]
+    suits = [Hearts, Spades, Diamonds, Clubs]
