@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Lab2.BlackJack
+import Lab2.BlackJack hiding (main)
 import Lab2.Cards
 import Test.QuickCheck
 

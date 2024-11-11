@@ -1,10 +1,13 @@
 module Lab2.BlackJack
-  ( hand2,
+  ( -- part A
+    hand2,
     sizeSteps,
     display,
     value,
     gameOver,
     winner,
+    -- part B
+    (<+),
     fullDeck,
     draw,
     playBank,
@@ -18,8 +21,8 @@ module Lab2.BlackJack
   )
 where
 
-import Lab2.Cards
-import Lab2.RunGame
+import Lab2.Cards -- rename to Cards
+import Lab2.RunGame -- rename to RunGame
 import System.Random
 
 -- | Computing the steps of the size function for an example hand
