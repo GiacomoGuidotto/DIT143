@@ -84,8 +84,7 @@ initalValue (Add c h) = (valueRank (rank c) + v, ace + a)
 adjustForAces :: (Integer, Integer) -> Integer
 adjustForAces (v, a)
   | v <= 21 = v
-  | a == 0 = v
-  | otherwise = adjustForAces (v - 10, a - 1)
+  | otherwise = v - 10 * a
 
 -- | Compute the value of a hand and adjust the value if the hand
 -- contains aces
