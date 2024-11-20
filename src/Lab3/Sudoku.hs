@@ -1,6 +1,7 @@
 -- module Sudoku
 module Lab3.Sudoku
-  ( rows,
+  ( Sudoku (..),
+    rows,
     allBlankSudoku,
     example,
     isSudoku,
