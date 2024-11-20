@@ -1,6 +1,7 @@
 -- module Sudoku
 module Lab3.Sudoku
-  ( allBlankSudoku,
+  ( rows,
+    allBlankSudoku,
     example,
     isSudoku,
     isFilled,
@@ -27,7 +28,7 @@ type Cell = Maybe Int -- a single cell
 
 type Row = [Cell] -- a row is a list of cells
 
-data Sudoku = Sudoku [Row]
+newtype Sudoku = Sudoku [Row]
   deriving (Show, Eq)
 
 rows :: Sudoku -> [Row]
