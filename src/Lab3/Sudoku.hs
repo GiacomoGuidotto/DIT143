@@ -178,7 +178,11 @@ chunkOf n xs = take n xs : chunkOf n (drop n xs)
 
 -- | blocks takes a sudoku and returns a list of all blocks
 blocks :: Sudoku -> [Block]
-blocks s =
+blocks s = rows s ++ cols s ++ getBlocks s
+
+-- | getBlocks takes a sudoku and returns a list of all blocks
+getBlocks :: Sudoku -> [Block]
+getBlocks s =
   let -- groups of 3 rows each
       rowsGroups = chunkOf 3 (rows s)
 
@@ -195,7 +199,7 @@ blocks s =
       concatMap blocksInGroup rowsGroups
 
 prop_blocks_lengths :: Sudoku -> Bool
-prop_blocks_lengths s = length bs == 9 && all ((== 9) . length) bs
+prop_blocks_lengths s = length bs == 9 * 3 && all ((== 9) . length) bs
   where
     bs = blocks s
 
