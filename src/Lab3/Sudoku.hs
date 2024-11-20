@@ -1,4 +1,4 @@
--- module Sudoku where
+-- module Sudoku
 module Lab3.Sudoku
   ( allBlankSudoku,
     example,
@@ -6,10 +6,18 @@ module Lab3.Sudoku
     isFilled,
     readSudoku,
     printSudoku,
+    cell,
+    prop_Sudoku,
+    isOkayBlock,
+    blocks,
+    prop_blocks_lengths,
+    isOkay,
   )
 where
 
 import Data.Char (digitToInt)
+import Data.List (nub, transpose)
+import Data.Maybe (catMaybes)
 import Test.QuickCheck
 
 ------------------------------------------------------------------------------
@@ -24,6 +32,9 @@ data Sudoku = Sudoku [Row]
 
 rows :: Sudoku -> [Row]
 rows (Sudoku ms) = ms
+
+cols :: Sudoku -> [Row]
+cols = transpose . rows
 
 -- | A sample sudoku puzzle
 example :: Sudoku
@@ -126,23 +137,19 @@ readSudoku p = do
 -- * C1
 
 -- | cell generates an arbitrary cell in a Sudoku
-cell :: Gen (Cell)
-cell = undefined
+cell :: Gen Cell
+cell = frequency [(9, return Nothing), (1, Just <$> choose (1, 9))]
 
 -- * C2
 
 -- | an instance for generating Arbitrary Sudokus
 instance Arbitrary Sudoku where
-  arbitrary = undefined
-
--- hint: get to know the QuickCheck function vectorOf
+  arbitrary = Sudoku <$> vectorOf 9 (vectorOf 9 cell)
 
 -- * C3
 
 prop_Sudoku :: Sudoku -> Bool
-prop_Sudoku = undefined
-
--- hint: this definition is simple!
+prop_Sudoku = isSudoku
 
 ------------------------------------------------------------------------------
 
@@ -150,21 +157,53 @@ type Block = [Cell] -- a Row is also a Cell
 
 -- * D1
 
+-- | hasUniqueJusts checks if a list of Maybe values is unique ignoring Nothings
+hasUniqueJusts :: (Eq a) => [Maybe a] -> Bool
+hasUniqueJusts xs =
+  let justValues = catMaybes xs
+   in length justValues == length (nub justValues)
+
+-- | isOkayBlock checks if a block is valid following the sudoku rules
 isOkayBlock :: Block -> Bool
-isOkayBlock = undefined
+isOkayBlock b = length b == 9 && hasUniqueJusts b
 
 -- * D2
 
+-- | chunkOf takes a list and returns a list of lists of n elements each
+chunkOf :: Int -> [a] -> [[a]]
+chunkOf _ [] = []
+chunkOf n xs = take n xs : chunkOf n (drop n xs)
+
+-- | blocks takes a sudoku and returns a list of all blocks
 blocks :: Sudoku -> [Block]
-blocks = undefined
+blocks s =
+  let -- groups of 3 rows each
+      rowsGroups = chunkOf 3 (rows s)
+
+      -- get the three blocks from the three rows
+      blocksInGroup rowsGroup =
+        let -- split all 3 rows in 3 chunks each
+            chunkedRowsGroup = map (chunkOf 3) rowsGroup
+            -- transpose the 9 chunk in the group to
+            -- move the three chunk in the same column in one row
+            chunkedBlocksGroup = transpose chunkedRowsGroup
+         in -- concat each chunk in the row
+            map concat chunkedBlocksGroup
+   in -- get the blocks for each groups of rows and concat them
+      concatMap blocksInGroup rowsGroups
 
 prop_blocks_lengths :: Sudoku -> Bool
-prop_blocks_lengths = undefined
+prop_blocks_lengths s = length bs == 9 && all ((== 9) . length) bs
+  where
+    bs = blocks s
 
 -- * D3
 
 isOkay :: Sudoku -> Bool
-isOkay = undefined
+isOkay s =
+  all isOkayBlock (blocks s)
+    && all hasUniqueJusts (rows s)
+    && all hasUniqueJusts (cols s)
 
 ---- Part A ends here --------------------------------------------------------
 ------------------------------------------------------------------------------

@@ -1,8 +1,14 @@
 module Main (main) where
 
 import Lab3.Sudoku
+import Test.QuickCheck (quickCheck)
 
 main :: IO ()
 main = do
-  s <- readSudoku "test.txt"
-  printSudoku s
+  putStrLn "=== QuickCheck tests ==="
+  quickCheck prop_Sudoku
+  quickCheck prop_blocks_lengths
+  putStrLn "=== Example ==="
+  printSudoku example
+  print (blocks example)
+  print (isOkay example)
