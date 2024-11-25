@@ -14,12 +14,18 @@ module Lab3.Sudoku
     blocks,
     prop_blocks_lengths,
     isOkay,
+    blanks,
+    prop_blanks_allBlanks,
+    (!!=),
+    prop_bangBangEquals_correct,
+    update,
+    prop_update_updated,
   )
 where
 
 import Data.Char (digitToInt)
 import Data.List (nub, transpose)
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes, isNothing)
 import Test.QuickCheck
 
 ------------------------------------------------------------------------------
@@ -221,27 +227,41 @@ type Pos = (Int, Int)
 
 -- * E1
 
+-- | blanks takes a sudoku and returns a list of blank positions
 blanks :: Sudoku -> [Pos]
-blanks = undefined
+blanks s =
+  [(i, j) | (i, r) <- zip [0 ..] (rows s), (j, v) <- zip [0 ..] r, isNothing v]
 
--- prop_blanks_allBlanks :: ...
--- prop_blanks_allBlanks =
+prop_blanks_allBlanks :: Bool
+prop_blanks_allBlanks =
+  let expected = [(i, j) | i <- [0 .. 8], j <- [0 .. 8]]
+   in blanks allBlankSudoku == expected
 
 -- * E2
 
+-- | (!!=) replaces the ith element of a list
 (!!=) :: [a] -> (Int, a) -> [a]
-xs !!= (i, y) = undefined
+xs !!= (i, y)
+  | i >= 0 && i < length xs = take i xs ++ [y] ++ drop (i + 1) xs
+  | otherwise = xs
 
--- prop_bangBangEquals_correct :: ...
--- prop_bangBangEquals_correct =
+prop_bangBangEquals_correct :: [Int] -> (Int, Int) -> Bool
+prop_bangBangEquals_correct xs (i, x)
+  | i >= 0 && i < length xs = (xs !!= (i, x)) !! i == x
+  | otherwise = xs !!= (i, x) == xs
 
 -- * E3
 
+-- | update sud pos cell returns a sudoku where the cell at pos is set to cell
 update :: Sudoku -> Pos -> Cell -> Sudoku
-update = undefined
+update s (i, j) v
+  | i `elem` [0 .. 8] && j `elem` [0 .. 8] = Sudoku $ rows s !!= (i, (rows s !! i) !!= (j, v))
+  | otherwise = s
 
--- prop_update_updated :: ...
--- prop_update_updated =
+prop_update_updated :: Sudoku -> Pos -> Cell -> Bool
+prop_update_updated s (i, j) v
+  | i `elem` [0 .. 8] && j `elem` [0 .. 8] = (rows (update s (i, j) v) !! i !! j) == v
+  | otherwise = update s (i, j) v == s
 
 ------------------------------------------------------------------------------
 
