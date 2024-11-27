@@ -20,6 +20,10 @@ module Lab3.Sudoku
     prop_bangBangEquals_correct,
     update,
     prop_update_updated,
+    solve,
+    readAndSolve,
+    isSolutionOf,
+    prop_SolveSound,
   )
 where
 
@@ -211,6 +215,7 @@ prop_blocks_lengths s = length bs == 9 * 3 && all ((== 9) . length) bs
 
 -- * D3
 
+-- | isOkay checks if a sudoku is valid following the sudoku rules
 isOkay :: Sudoku -> Bool
 isOkay s =
   all isOkayBlock (blocks s)
@@ -252,23 +257,71 @@ prop_bangBangEquals_correct xs (i, x)
 
 -- * E3
 
--- | update sud pos cell returns a sudoku where the cell at pos is set to cell
+-- | `update sud pos value` returns a sudoku where the cell at pos is set to value
 update :: Sudoku -> Pos -> Cell -> Sudoku
 update s (i, j) v
-  | i `elem` [0 .. 8] && j `elem` [0 .. 8] = Sudoku $ rows s !!= (i, (rows s !! i) !!= (j, v))
+  | i `elem` [0 .. 8] && j `elem` [0 .. 8] =
+      Sudoku $ rows s !!= (i, (rows s !! i) !!= (j, v))
   | otherwise = s
 
 prop_update_updated :: Sudoku -> Pos -> Cell -> Bool
 prop_update_updated s (i, j) v
-  | i `elem` [0 .. 8] && j `elem` [0 .. 8] = (rows (update s (i, j) v) !! i !! j) == v
+  | i `elem` [0 .. 8] && j `elem` [0 .. 8] =
+      (rows (update s (i, j) v) !! i !! j) == v
   | otherwise = update s (i, j) v == s
 
 ------------------------------------------------------------------------------
 
 -- * F1
 
+-- | solve takes a sudoku and returns Just the solved sudoku if it is solvable,
+-- and Nothing otherwise
+solve :: Sudoku -> Maybe Sudoku
+solve s
+  | not (isSudoku s) = Nothing -- invalid sudoku
+  | null solutions = Nothing -- no solution
+  | otherwise = Just $ head solutions
+  where
+    solutions = solve' s (blanks s)
+
+solve' :: Sudoku -> [Pos] -> [Sudoku]
+solve' s bs
+  | not (isOkay s) = [] -- invalid sudoku
+  | null bs = [s] -- no more blanks
+  | otherwise = concatMap solveForValue [1 .. 9] -- try all values for the first blank
+  where
+    b = head bs
+    bs' = tail bs
+    solveForValue v = solve' (update s b (Just v)) bs'
+
 -- * F2
+
+-- | readAndSolve reads a sudoku from a file and prints the solution
+-- if it exists
+readAndSolve :: FilePath -> IO ()
+readAndSolve p = do
+  s <- readSudoku p
+  case solve s of
+    Just s' -> printSudoku s'
+    Nothing -> putStrLn "(no solution)"
 
 -- * F3
 
+-- | isSolutionOf checks if s1 is a solution of s2
+isSolutionOf :: Sudoku -> Sudoku -> Bool
+isSolutionOf s1 s2 = isOkay s1 && isFilled s1 && s1 `respects` s2
+
+respects :: Sudoku -> Sudoku -> Bool
+respects s1 s2 = all checkRow (zip (rows s1) (rows s2))
+  where
+    checkRow (r1, r2) = all checkCell (zip r1 r2)
+    checkCell (c1, c2) = isNothing c2 || c1 == c2
+
 -- * F4
+
+prop_SolveSound :: Sudoku -> Property
+prop_SolveSound s =
+  isSudoku s ==>
+    case solve s of
+      Just s' -> s' `isSolutionOf` s
+      Nothing -> True
