@@ -14,9 +14,9 @@ jobs:
     strategy:
       matrix:
         ghc:
-          - "9.10.1" # latest
+          # - "9.10.1" # latest
           - "9.4.8" # recommended
-          - "8.10.7" # legacy
+          # - "8.10.7" # legacy
 
     steps:
       - name: Checkout repository
