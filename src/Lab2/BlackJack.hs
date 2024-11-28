@@ -1,4 +1,4 @@
-module Lab2.BlackJack
+module BlackJack
   ( -- part A
     hand2,
     sizeSteps,
@@ -21,8 +21,8 @@ module Lab2.BlackJack
   )
 where
 
-import Lab2.Cards -- rename to Cards
-import Lab2.RunGame -- rename to RunGame
+import Cards
+import RunGame
 import System.Random
 
 -- | Computing the steps of the size function for an example hand

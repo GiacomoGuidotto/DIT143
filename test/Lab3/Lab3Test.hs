@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Lab3.Sudoku
+import Sudoku
 import Test.QuickCheck (Testable, maxSuccess, quickCheck, quickCheckWith, stdArgs)
 
 fewerChecks :: (Testable prop) => prop -> IO ()

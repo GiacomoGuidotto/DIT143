@@ -1,5 +1,5 @@
 -- module Sudoku
-module Lab3.Sudoku
+module Sudoku
   ( Sudoku (..),
     rows,
     allBlankSudoku,

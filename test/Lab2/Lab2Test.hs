@@ -1,7 +1,7 @@
 module Main (main) where
 
-import Lab2.BlackJack hiding (main)
-import Lab2.Cards
+import BlackJack hiding (main)
+import Cards
 import Test.QuickCheck
 
 winningHand :: Hand

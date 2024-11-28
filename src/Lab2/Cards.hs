@@ -1,5 +1,5 @@
 -- | Data types for card games
-module Lab2.Cards where
+module Cards where
 
 import System.Random
 import Test.QuickCheck
@@ -32,7 +32,7 @@ data Hand = Empty | Add Card Hand
 -- | The size of a hand.
 size :: (Num a) => Hand -> a
 size Empty = 0
-size (Add card hand) = 1 + size hand
+size (Add _ hand) = 1 + size hand
 
 --------------------------------------------------------------------
 -- Functions below are to tell QuickCheck how to generate random cards

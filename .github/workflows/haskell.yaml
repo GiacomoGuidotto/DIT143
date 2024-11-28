@@ -1,0 +1,51 @@
+# .github/workflows/haskell-ci.yml
+name: Haskell CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ghc:
+          - "9.10.1" # latest
+          - "9.4.8" # recommended
+          - "8.10.7" # legacy
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Set up GHC ${{ matrix.ghc }}
+        uses: actions/setup-haskell@v1
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: "3.10.3.0"
+
+      - name: 📦 Cache Cabal packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cabal/store
+            ~/.cabal/packages
+          key: ${{ runner.os }}-cabal-${{ hashFiles('**/*.cabal') }}
+          restore-keys: |
+            ${{ runner.os }}-cabal-
+
+      - name: 🚀 Install dependencies
+        run: cabal update && cabal build --dependencies-only
+
+      - name: ⚒️ Build
+        run: cabal build
+
+      - name: 📝 Run tests
+        run: cabal test
+
+      - name: 💎 Run linter
+        run: hlint .

@@ -1,7 +1,7 @@
-module Lab2.RunGame where
+module RunGame where
 
+import Cards
 import Data.Char
-import Lab2.Cards
 import System.Random
 
 -- | The interface to the students' implementation.
