@@ -1,6 +1,9 @@
 # DIT143 - Functional Programming
 
-This package contains the content of the course "DIT143 - Functional Programming" offered at the University of Gothenburg. The package is divided into labs, each of which is a self-contained Haskell project.
+[![Haskell CI](https://github.com/GiacomoGuidotto/DIT143/actions/workflows/haskell.yaml/badge.svg)](https://github.com/GiacomoGuidotto/DIT143/actions/workflows/haskell.yaml)
+
+This package contains the content of the course "DIT143 - Functional Programming" offered at the University of Gothenburg.
+It is divided into labs, each of which is a self-contained Haskell project.
 
 ## Getting started
 
