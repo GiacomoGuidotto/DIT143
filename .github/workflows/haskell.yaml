@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: ⚙️ Set up GHC {{ matrix.ghc }} and Cabal {{ matrix.cabal }}
+      - name: ⚙️ Set up GHC ${{ matrix.ghc }} and Cabal ${{ matrix.cabal }}
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
