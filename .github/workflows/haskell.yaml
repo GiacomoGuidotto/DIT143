@@ -1,5 +1,5 @@
 # .github/workflows/haskell-ci.yml
-name: Haskell CI
+name: CI
 
 on:
   push:
@@ -11,21 +11,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        ghc:
-          # - "9.10.1" # latest
-          - "9.4.8" # recommended
-          # - "8.10.7" # legacy
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: ⚙️ Set up GHC ${{ matrix.ghc }}
-        uses: actions/setup-haskell@v1
+      - name: ⚙️ Set up GHC 9.4.8
+        uses: actions/setup-haskell@v1.1
         with:
-          ghc-version: ${{ matrix.ghc }}
+          ghc-version: "9.4.8"
           cabal-version: "3.10.3.0"
 
       - name: 📦 Cache Cabal packages
