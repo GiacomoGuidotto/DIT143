@@ -26,10 +26,19 @@ jobs:
       - name: 📦 Cache GHC and Cabal
         uses: actions/cache@v3
         with:
-          path: |
-            ${{ runner.tool_cache }}/ghc
-            ${{ runner.tool_cache }}/cabal
           key: ${{ runner.os }}-ghc-${{ matrix.ghc }}-cabal-${{ matrix.cabal }}
+          restore-keys: |
+            ${{ runner.os }}-ghc-${{ matrix.ghc }}-cabal-${{ matrix.cabal }}
+            ${{ runner.os }}-ghc-${{ matrix.ghc }}
+            ${{ runner.os }}-ghc-
+
+          path: |
+            ~/.cabal
+            ~/.ghcup
+
+            ${{ runner.os == 'Windows' && 'C:\\ghcup' }}
+            ${{ runner.os == 'macOS' && '~/ghcup' }}
+            ${{ runner.os == 'ubuntu-latest' && '~/ghcup' }}
 
       - name: ⚙️ Set up GHC and Cabal
         uses: haskell-actions/setup@v2
