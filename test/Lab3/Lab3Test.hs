@@ -4,7 +4,7 @@ import Sudoku
 import Test.QuickCheck (Testable, maxSuccess, quickCheck, quickCheckWith, stdArgs)
 
 fewerChecks :: (Testable prop) => prop -> IO ()
-fewerChecks = quickCheckWith stdArgs {maxSuccess = 10}
+fewerChecks = quickCheckWith stdArgs {maxSuccess = 20}
 
 test :: FilePath -> IO ()
 test p = do

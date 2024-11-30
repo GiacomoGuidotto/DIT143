@@ -1,5 +1,7 @@
 # DIT143 - Functional Programming
 
+This package contains the content of the course "DIT143 - Functional Programming" offered at the University of Gothenburg. The package is divided into labs, each of which is a self-contained Haskell project.
+
 ## Getting started
 
 use cabal to build the project:

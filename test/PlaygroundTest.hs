@@ -18,6 +18,6 @@ testIO =
     ex = [1, -2, 3, -4, 5, -6, 7, -8, 9, -10]
 
 main :: IO ()
--- main = testCollatz
+main = testCollatz
 -- main = testIO
-main = hangman
+-- main = hangman
