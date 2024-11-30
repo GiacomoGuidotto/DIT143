@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# OPTIONS_GHC -w #-}
 
 {-# HLINT ignore #-}
 

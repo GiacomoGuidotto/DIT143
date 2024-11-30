@@ -1,38 +1,95 @@
-module Expr where
+module Expr
+  ( Expr (..),
+    x,
+    num,
+    add,
+    mul,
+    Expr.sin,
+    Expr.cos,
+    size,
+    showExpr,
+    eval,
+    readExpr,
+    prop_ShowReadExpr,
+    arbExpr,
+    simplify,
+    differentiate,
+  )
+where
 
 import Test.QuickCheck
+
+data BinaryFunc = Add | Mul
+
+instance Show BinaryFunc where
+  show Add = "+"
+  show Mul = "*"
+
+evalBinary :: BinaryFunc -> Double -> Double -> Double
+evalBinary Add = (+)
+evalBinary Mul = (*)
+
+data UnaryFunc = Sin | Cos
+
+instance Show UnaryFunc where
+  show Sin = "sin"
+  show Cos = "cos"
+
+evalUnary :: UnaryFunc -> Double -> Double
+evalUnary Sin = Prelude.sin
+evalUnary Cos = Prelude.cos
 
 data Expr
   = Num Double
   | Var
-  | Op (Double -> Double -> Double) Expr Expr
-  | Function (Double -> Double) Expr
+  | Binary BinaryFunc Expr Expr
+  | Unary UnaryFunc Expr
+
+instance Show Expr where
+  show = showExpr
 
 instance Arbitrary Expr where
   arbitrary = undefined
 
 x :: Expr
-x = undefined
+x = Var
 
 num :: Double -> Expr
-num = undefined
+num = Num
 
 add, mul :: Expr -> Expr -> Expr
-add = undefined
-mul = undefined
+add = Binary Add
+mul = Binary Mul
 
 sin, cos :: Expr -> Expr
-sin = undefined
-cos = undefined
+sin = Unary Sin
+cos = Unary Cos
 
 size :: Expr -> Int
-size = undefined
+size Var = 0
+size (Num _) = 0
+size (Binary _ e1 e2) = 1 + size e1 + size e2
+size (Unary _ e) = 1 + size e
 
 showExpr :: Expr -> String
-showExpr = undefined
+showExpr Var = "x"
+showExpr (Num n) = show n
+showExpr (Binary op e1 e2) = wrap e1 ++ show op ++ wrap e2
+  where
+    wrap (Binary nestedOp _ _)
+      | show op == "*" && show nestedOp == "+" =
+          "(" ++ showExpr e1 ++ ")"
+    wrap _ = showExpr e1
+showExpr (Unary f e) = show f ++ wrap e
+  where
+    wrap (Binary {}) = "(" ++ showExpr e ++ ")"
+    wrap _ = showExpr e
 
 eval :: Expr -> Double -> Double
-eval = undefined
+eval Var c = c
+eval (Num n) _ = n
+eval (Binary op e1 e2) c = evalBinary op (eval e1 c) (eval e2 c)
+eval (Unary f e) c = evalUnary f (eval e c)
 
 readExpr :: String -> Maybe Expr
 readExpr = undefined

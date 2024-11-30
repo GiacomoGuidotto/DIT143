@@ -1,4 +1,3 @@
--- module Sudoku
 module Sudoku
   ( Sudoku (..),
     rows,

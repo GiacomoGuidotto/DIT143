@@ -1,12 +1,10 @@
 module BlackJack
-  ( -- part A
-    hand2,
+  ( hand2,
     sizeSteps,
     display,
     value,
     gameOver,
     winner,
-    -- part B
     (<+),
     fullDeck,
     draw,

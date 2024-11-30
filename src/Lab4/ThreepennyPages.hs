@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -w #-}
+
 -- | This module defines helper functions for creating web pages using
 -- "Graphics.UI.Threepenny".
 module ThreepennyPages

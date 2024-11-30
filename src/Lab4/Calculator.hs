@@ -1,6 +1,9 @@
+{-# OPTIONS_GHC -w #-}
+
 -- This module provides a GUI for a Graph Drawing Calculator
 -- that can optionally be used in Lab 4. You can use this
 -- directly, or just study it as an example of how to use threepenny-gui.
+
 module Calculator where
 
 import Data.Maybe (fromJust, isNothing)
