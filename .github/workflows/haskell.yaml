@@ -60,7 +60,7 @@ jobs:
       - name: 🚀 Install dependencies
         run: |
           cabal update
-          cabal install hlint
+          cabal install hlint --overwrite-policy=always
           cabal build --dependencies-only
 
       - name: ⚒️ Build
