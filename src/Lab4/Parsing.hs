@@ -1,3 +1,7 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore #-}
+
 -- |
 -- Module      : Parsing
 -- Description : Simple Monadic Parsing Library

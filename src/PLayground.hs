@@ -1,3 +1,7 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore #-}
+
 module Playground where
 
 import Data.List (union, (\\))
