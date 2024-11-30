@@ -42,8 +42,10 @@ jobs:
       - name: ⚒️ Build
         run: cabal build
 
-      - name: 📝 Run tests
+      - name: 📝 Test
         run: cabal test
 
-      - name: 💎 Run linter
-        run: hlint .
+      - name: 💎 Lint
+        run: |
+          cabal install hlint
+          hlint .
