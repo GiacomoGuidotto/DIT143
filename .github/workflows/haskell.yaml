@@ -20,27 +20,39 @@ jobs:
           - os: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📂 Checkout repository
         uses: actions/checkout@v3
 
-      - name: ⚙️ Set up GHC ${{ matrix.ghc }} and Cabal ${{ matrix.cabal }}
+      - name: 📦 Cache GHC and Cabal
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ runner.tool_cache }}/ghc
+            ${{ runner.tool_cache }}/cabal
+          key: ${{ runner.os }}-ghc-${{ matrix.ghc }}-cabal-${{ matrix.cabal }}
+
+      - name: ⚙️ Set up GHC and Cabal
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
           cabal-version: ${{ matrix.cabal }}
 
-      - name: 📦 Cache Cabal packages
+      - name: 📦 Cache dependencies
         uses: actions/cache@v3
         with:
           path: |
             ~/.cabal/store
             ~/.cabal/packages
-          key: ${{ runner.os }}-cabal-${{ hashFiles('**/*.cabal') }}
+            dist-newstyle
+          key: ${{ runner.os }}-cabal-${{ hashFiles('**/*.cabal', 'cabal.project', 'cabal.project.freeze') }}
           restore-keys: |
             ${{ runner.os }}-cabal-
 
       - name: 🚀 Install dependencies
-        run: cabal update && cabal build --dependencies-only
+        run: |
+          cabal update
+          cabal install hlint
+          cabal build --dependencies-only
 
       - name: ⚒️ Build
         run: cabal build
@@ -49,6 +61,4 @@ jobs:
         run: cabal test
 
       - name: 💎 Lint
-        run: |
-          cabal install hlint
-          hlint .
+        run: hlint .
