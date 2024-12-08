@@ -1,6 +1,6 @@
 module Main where
 
-import qualified Calculator as Cmain
+import Calculator
 
 main :: IO ()
-main = Cmain.main
+main = Calculator.main

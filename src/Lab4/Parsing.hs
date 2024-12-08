@@ -87,7 +87,6 @@ import Control.Monad (ap, liftM)
 import Control.Monad.Fail
 import Data.Char
 import Data.Maybe (listToMaybe)
-import Expr
 
 ------------------
 
