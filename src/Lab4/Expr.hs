@@ -17,16 +17,20 @@ module Expr
     size,
     showExpr,
     eval,
+    -- parsing
     readExpr,
-    prop_ShowReadExpr,
-    arbExpr,
+    -- expression manipulation
     simplify,
     differentiate,
+    -- testing
+    arbExpr,
+    prop_ShowReadExpr,
   )
 where
 
 import Data.Char (isSpace)
 import Data.Functor
+import Data.Maybe (fromMaybe)
 import Parsing
 import Test.QuickCheck
 
@@ -101,13 +105,6 @@ binaryPrecedence :: BinaryFunc -> Int
 binaryPrecedence Add = 1
 binaryPrecedence Mul = 2
 
--- declaring custom show instance for Expr
-instance Show Expr where
-  show = showExpr
-
-instance Arbitrary Expr where
-  arbitrary = undefined
-
 -- examples -------------------------------------------------------------------
 ex1 :: Expr
 ex1 = add (mul (num 3) x) (num 5)
@@ -146,6 +143,10 @@ showExpr (Unary f e) = show f ++ " " ++ wrap e
   where
     wrap (Binary {}) = "(" ++ showExpr e ++ ")"
     wrap _ = showExpr e
+
+-- declaring custom show instance for Expr
+instance Show Expr where
+  show = showExpr
 
 eval :: Expr -> Double -> Double
 eval Var c = c
@@ -204,16 +205,40 @@ foldChain p s f = do
     [] -> failure
     (e : es') -> return $ foldl f e es'
 
+-- optional parses a parser and returns Just the result if the parsing is
+-- successful, otherwise it returns Nothing
+optional :: Parser a -> Parser (Maybe a)
+optional p = (Just <$> p) <|> return Nothing
+
 -- | expression parsers
 
 -- varP creates a parser for the string "x" and construct
 varP :: Parser Expr
 varP = symbol "x" $> Var
 
--- numberP creates a parser for one or more digits and construct
--- a parser for Expr Num
+-- numberP creates a parser for possibly signed, possibly decimal numbers.
 numberP :: Parser Expr
-numberP = token (Num . read <$> oneOrMore digit)
+numberP = token (Num . read <$> doubleP)
+  where
+    doubleP :: Parser String
+    doubleP = do
+      sign <- optional (char '-' <|> char '+')
+      int <- oneOrMore digit
+      frac <- optional (char '.' <:> oneOrMore digit)
+      expo <- optional exponentP
+      return
+        ( maybe "" (: []) sign
+            ++ int
+            ++ fromMaybe "" frac
+            ++ fromMaybe "" expo
+        )
+
+    exponentP :: Parser String
+    exponentP = do
+      e <- char 'e' <|> char 'E'
+      s <- optional (char '-' <|> char '+')
+      ds <- oneOrMore digit
+      return (e : maybe "" (: []) s ++ ds)
 
 -- unaryP creates a parser for unary functions names by try to match
 -- all the strings in unaryOps and construct a parser for UnaryFunc
@@ -244,7 +269,7 @@ termP = foldChain factorP (symbol "*") mul
 exprP :: Parser Expr
 exprP = foldChain termP (symbol "+") add
 
--- | parse function -----------------------------------------------------------
+-- | parse function
 
 -- readExpr parses a string using the exprP parser and returns the parsed
 -- expression if the parsing is successful, otherwise it returns Nothing
@@ -253,14 +278,43 @@ readExpr s = case parse exprP s of
   Just (e, "") -> Just e
   _ -> Nothing
 
-prop_ShowReadExpr :: Expr -> Bool
-prop_ShowReadExpr e = readExpr (showExpr e) == Just e
-
-arbExpr :: Int -> Gen Expr
-arbExpr = undefined
-
+-- | expression manipulation --------------------------------------------------
 simplify :: Expr -> Expr
 simplify = undefined
 
 differentiate :: Expr -> Expr
 differentiate = undefined
+
+-- | testing ------------------------------------------------------------------
+
+-- | generators
+instance Arbitrary UnaryFunc where
+  arbitrary = elements [Sin, Cos]
+
+instance Arbitrary BinaryFunc where
+  arbitrary = elements [Add, Mul]
+
+arbExpr :: Int -> Gen Expr
+arbExpr 0 =
+  oneof
+    [ return Var,
+      Num <$> arbitrary
+    ]
+arbExpr n =
+  oneof
+    [ return Var,
+      Num <$> arbitrary,
+      Binary <$> arbitrary <*> subExpr <*> subExpr,
+      Unary <$> arbitrary <*> subExpr
+    ]
+  where
+    subExpr = arbExpr (n `div` 2)
+
+instance Arbitrary Expr where
+  arbitrary = sized arbExpr
+
+-- | props
+
+-- prop_ShowReadExpr tests the showExpr and readExpr functions
+prop_ShowReadExpr :: Expr -> Bool
+prop_ShowReadExpr e = readExpr (showExpr e) == Just e

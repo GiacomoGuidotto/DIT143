@@ -5,4 +5,4 @@ import Test.QuickCheck
 
 main :: IO ()
 main = do
-  quickCheck prop_ShowReadExpr
+  verboseCheck prop_ShowReadExpr
