@@ -30,7 +30,6 @@ where
 
 import Data.Char (isSpace)
 import Data.Functor
-import Data.Maybe (fromMaybe)
 import Parsing
 import Test.QuickCheck
 
@@ -154,6 +153,19 @@ eval (Num n) _ = n
 eval (Binary op e1 e2) c = evalBinary op (eval e1 c) (eval e2 c)
 eval (Unary f e) c = evalUnary f (eval e c)
 
+-- flatten a nested binary expression of a given operator into a list of subexpressions
+flatten :: BinaryFunc -> Expr -> [Expr]
+flatten op (Binary op' e1 e2) | op' == op = flatten op e1 ++ flatten op e2
+flatten _ e = [e]
+
+normalize :: Expr -> Expr
+normalize (Binary op e1 e2) =
+  let es = map normalize (flatten op (Binary op e1 e2))
+   in foldl1 (Binary op) es
+normalize (Unary f e) = Unary f (normalize e)
+normalize (Num n) = Num n
+normalize Var = Var
+
 -- | parsing ------------------------------------------------------------------
 
 {-
@@ -205,11 +217,6 @@ foldChain p s f = do
     [] -> failure
     (e : es') -> return $ foldl f e es'
 
--- optional parses a parser and returns Just the result if the parsing is
--- successful, otherwise it returns Nothing
-optional :: Parser a -> Parser (Maybe a)
-optional p = (Just <$> p) <|> return Nothing
-
 -- | expression parsers
 
 -- varP creates a parser for the string "x" and construct
@@ -218,34 +225,14 @@ varP = symbol "x" $> Var
 
 -- numberP creates a parser for possibly signed, possibly decimal numbers.
 numberP :: Parser Expr
-numberP = token (Num . read <$> doubleP)
-  where
-    doubleP :: Parser String
-    doubleP = do
-      sign <- optional (char '-' <|> char '+')
-      int <- oneOrMore digit
-      frac <- optional (char '.' <:> oneOrMore digit)
-      expo <- optional exponentP
-      return
-        ( maybe "" (: []) sign
-            ++ int
-            ++ fromMaybe "" frac
-            ++ fromMaybe "" expo
-        )
-
-    exponentP :: Parser String
-    exponentP = do
-      e <- char 'e' <|> char 'E'
-      s <- optional (char '-' <|> char '+')
-      ds <- oneOrMore digit
-      return (e : maybe "" (: []) s ++ ds)
+numberP = token ((readsP :: Parser Double) <&> Num)
 
 -- unaryP creates a parser for unary functions names by try to match
 -- all the strings in unaryOps and construct a parser for UnaryFunc
 unaryP :: Parser UnaryFunc
 unaryP = foldr ((<|>) . makeParser) failure unaryOps
   where
-    makeParser (s, f) = string s $> f
+    makeParser (s, f) = token (string s $> f)
 
 -- factorP creates a parser for the building blocks of the expression
 -- treated as factors of multiplictions. It tries to match unary functions,
@@ -317,4 +304,6 @@ instance Arbitrary Expr where
 
 -- prop_ShowReadExpr tests the showExpr and readExpr functions
 prop_ShowReadExpr :: Expr -> Bool
-prop_ShowReadExpr e = readExpr (showExpr e) == Just e
+prop_ShowReadExpr e = case readExpr (showExpr e) of
+  Just e' -> normalize e == normalize e'
+  Nothing -> False
