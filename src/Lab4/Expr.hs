@@ -304,7 +304,24 @@ simplify e =
 
 -- differentiate computes the derivative of the expression
 differentiate :: Expr -> Expr
-differentiate = undefined
+differentiate Var = Num 1
+differentiate (Num _) = Num 0
+differentiate (Binary Add e1 e2) =
+  add
+    (differentiate e1)
+    (differentiate e2)
+differentiate (Binary Mul e1 e2) =
+  add
+    (mul (differentiate e1) e2)
+    (mul e1 (differentiate e2))
+differentiate (Unary Sin e) =
+  mul
+    (Expr.cos e)
+    (differentiate e)
+differentiate (Unary Cos e) =
+  mul
+    (mul (num (-1)) (Expr.sin e))
+    (differentiate e)
 
 -- | testing ------------------------------------------------------------------
 
