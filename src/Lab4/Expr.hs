@@ -282,24 +282,23 @@ isConst (Unary _ e) = isConst e
 evalConst :: Expr -> Double
 evalConst e = eval e 0
 
--- simplify' simplifies bottom-up the expression and evaluates only the basic arithmetic operations
-simplify' :: Expr -> Expr
-simplify' (Binary Add (Num 0) e) = simplify' e
-simplify' (Binary Add e (Num 0)) = simplify' e
-simplify' (Binary Mul (Num 0) _) = Num 0
-simplify' (Binary Mul _ (Num 0)) = Num 0
-simplify' (Binary Mul (Num 1) e) = simplify' e
-simplify' (Binary Mul e (Num 1)) = simplify' e
-simplify' (Binary op e1 e2) = Binary op (simplify' e1) (simplify' e2)
-simplify' (Unary f e) = Unary f (simplify' e)
-simplify' e = e
-
--- simplify simplifies the expression and evaluates the constants
+-- simplify simplifies bottom-up the expression,
+-- evaluates only the basic arithmetic operations
+-- and returns the simplified expression
 simplify :: Expr -> Expr
 simplify Var = Var
 simplify (Num n) = Num n
-simplify e =
-  let e' = simplify' e
+simplify (Binary Add (Num 0) e) = simplify e
+simplify (Binary Add e (Num 0)) = simplify e
+simplify (Binary Mul (Num 0) _) = Num 0
+simplify (Binary Mul _ (Num 0)) = Num 0
+simplify (Binary Mul (Num 1) e) = simplify e
+simplify (Binary Mul e (Num 1)) = simplify e
+simplify (Binary op e1 e2) =
+  let e' = Binary op (simplify e1) (simplify e2)
+   in if isConst e' then Num (evalConst e') else e'
+simplify (Unary f e) =
+  let e' = Unary f (simplify e)
    in if isConst e' then Num (evalConst e') else e'
 
 -- differentiate computes the derivative of the expression
