@@ -301,23 +301,26 @@ simplify (Unary f e) =
   let e' = Unary f (simplify e)
    in if isConst e' then Num (evalConst e') else e'
 
--- differentiate computes the derivative of the expression
+-- differentiate computes the derivative of the expression and simplifies it
 differentiate :: Expr -> Expr
-differentiate Var = Num 1
-differentiate (Num _) = Num 0
-differentiate (Binary Add e1 e2) =
+differentiate e = simplify (differentiate' e)
+
+differentiate' :: Expr -> Expr
+differentiate' Var = Num 1
+differentiate' (Num _) = Num 0
+differentiate' (Binary Add e1 e2) =
   add
     (differentiate e1)
     (differentiate e2)
-differentiate (Binary Mul e1 e2) =
+differentiate' (Binary Mul e1 e2) =
   add
     (mul (differentiate e1) e2)
     (mul e1 (differentiate e2))
-differentiate (Unary Sin e) =
+differentiate' (Unary Sin e) =
   mul
     (Expr.cos e)
     (differentiate e)
-differentiate (Unary Cos e) =
+differentiate' (Unary Cos e) =
   mul
     (mul (num (-1)) (Expr.sin e))
     (differentiate e)
