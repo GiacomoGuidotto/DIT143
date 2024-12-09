@@ -25,6 +25,9 @@ module Expr
     -- testing
     arbExpr,
     prop_ShowReadExpr,
+    prop_simplifyNoVar,
+    prop_simplifyPreservesValue,
+    prop_simplifyBasicOps,
   )
 where
 
@@ -266,9 +269,40 @@ readExpr s = case parse exprP s of
   _ -> Nothing
 
 -- | expression manipulation --------------------------------------------------
-simplify :: Expr -> Expr
-simplify = undefined
 
+-- isConst checks if an expression is a constant, i.e. it does not contain
+-- any variable "x"
+isConst :: Expr -> Bool
+isConst Var = False
+isConst (Num _) = True
+isConst (Binary _ e1 e2) = isConst e1 && isConst e2
+isConst (Unary _ e) = isConst e
+
+-- evalConst evaluates an expression with a irrelevant value for the variable "x"
+evalConst :: Expr -> Double
+evalConst e = eval e 0
+
+-- simplify' simplifies bottom-up the expression and evaluates only the basic arithmetic operations
+simplify' :: Expr -> Expr
+simplify' (Binary Add (Num 0) e) = simplify' e
+simplify' (Binary Add e (Num 0)) = simplify' e
+simplify' (Binary Mul (Num 0) _) = Num 0
+simplify' (Binary Mul _ (Num 0)) = Num 0
+simplify' (Binary Mul (Num 1) e) = simplify' e
+simplify' (Binary Mul e (Num 1)) = simplify' e
+simplify' (Binary op e1 e2) = Binary op (simplify' e1) (simplify' e2)
+simplify' (Unary f e) = Unary f (simplify' e)
+simplify' e = e
+
+-- simplify simplifies the expression and evaluates the constants
+simplify :: Expr -> Expr
+simplify Var = Var
+simplify (Num n) = Num n
+simplify e =
+  let e' = simplify' e
+   in if isConst e' then Num (evalConst e') else e'
+
+-- differentiate computes the derivative of the expression
 differentiate :: Expr -> Expr
 differentiate = undefined
 
@@ -302,8 +336,34 @@ instance Arbitrary Expr where
 
 -- | props
 
--- prop_ShowReadExpr tests the showExpr and readExpr functions
+-- prop_ShowReadExpr tests that parsing the string representation of an expression
+-- returns the same normalized expression, i.e. an expression that is structurally
+-- equivalent to the original one
 prop_ShowReadExpr :: Expr -> Bool
 prop_ShowReadExpr e = case readExpr (showExpr e) of
   Just e' -> normalize e == normalize e'
   Nothing -> False
+
+-- prop_simplifyNoVar tests that simplifying an expression without variables
+-- returns an expression that is equivalent to the original one
+prop_simplifyNoVar :: Expr -> Property
+prop_simplifyNoVar e =
+  isConst e ==>
+    case simplify e of
+      Num n -> n == eval e 0
+      _ -> False
+
+-- prop_simplifyPreservesValue tests that simplifying an expression preserves
+-- its value for a given variable
+prop_simplifyPreservesValue :: Expr -> Double -> Bool
+prop_simplifyPreservesValue e var = eval e var == eval (simplify e) var
+
+-- prop_simplifyBasicOps tests that simplifying basic arithmetic operations
+-- returns the expected result
+prop_simplifyBasicOps :: Bool
+prop_simplifyBasicOps =
+  simplify (add (num 1) (num 0)) == num 1
+    && simplify (add (num 0) x) == x
+    && simplify (mul (num 1) x) == x
+    && simplify (mul x (num 0)) == num 0
+    && simplify (mul (num 1) (num 2)) == num 2

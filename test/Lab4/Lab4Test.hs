@@ -5,4 +5,7 @@ import Test.QuickCheck
 
 main :: IO ()
 main = do
-  verboseCheck prop_ShowReadExpr
+  quickCheck prop_ShowReadExpr
+  quickCheck prop_simplifyNoVar
+  quickCheck prop_simplifyPreservesValue
+  quickCheck prop_simplifyBasicOps
