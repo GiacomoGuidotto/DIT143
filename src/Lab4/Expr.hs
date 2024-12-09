@@ -143,7 +143,7 @@ showExpr (Binary op e1 e2) = wrap e1 ++ " " ++ show op ++ " " ++ wrap e2
     wrap e = showExpr e
 showExpr (Unary f e) = show f ++ " " ++ wrap e
   where
-    wrap (Binary {}) = "(" ++ showExpr e ++ ")"
+    wrap Binary {} = "(" ++ showExpr e ++ ")"
     wrap _ = showExpr e
 
 -- declaring custom show instance for Expr
