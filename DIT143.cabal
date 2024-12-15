@@ -167,7 +167,7 @@ library lab5
     import:           warnings
     default-language: Haskell2010
     hs-source-dirs:   src/Lab5
-    exposed-modules:  Guesser,
+    exposed-modules:  Lab5,
     build-depends:
         base ^>= 4.17.2.1,
         QuickCheck >= 2.14
@@ -178,6 +178,16 @@ test-suite lab5-test
     default-language: Haskell2010
     hs-source-dirs:   test/Lab5
     main-is:          Lab5Test.hs
+    build-depends:
+        base ^>= 4.17.2.1,
+        QuickCheck >= 2.14,
+        lab5
+
+executable guesser
+    import:           warnings
+    default-language: Haskell2010
+    hs-source-dirs:   src/Lab5
+    main-is:          Main.hs
     build-depends:
         base ^>= 4.17.2.1,
         QuickCheck >= 2.14,
