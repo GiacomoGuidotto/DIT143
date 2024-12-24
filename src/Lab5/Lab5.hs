@@ -2,7 +2,7 @@ module Lab5
   ( QA (Person, Question),
     defaultTree,
     readQAFromFile,
-    isYes,
+    getYesNo,
     askQuestions,
     learnNew,
     play,
@@ -50,23 +50,27 @@ readQAFromFile fname = do
           return defaultTree
         Right qa -> return qa
 
--- utility function to check if the user's input starts with 'y'
--- to determine if the answer is yes (case-insensitive)
-isYes :: String -> Bool
-isYes ans = case map toLower ans of
-  ('y' : _) -> True
-  _ -> False
+-- | A helper function that forces the user to type exactly "yes" or "no".
+--   It repeats until it gets a valid answer, then returns True for "yes"
+--   and False for "no".
+getYesNo :: IO Bool
+getYesNo = do
+  ans <- getLine
+  case map toLower ans of
+    "yes" -> return True
+    "no" -> return False
+    _ -> do
+      putStr "Please answer yes or no! "
+      hFlush stdout
+      getYesNo
 
--- singe match loop
--- traverse the tree top-down to ask questions, rebuild the tree bottom-up
--- to change the leaf node in case the computer's guess is wrong
 askQuestions :: QA -> IO QA
 -- leaf node: computer's guess
 askQuestions (Person name) = do
   putStr ("My guess: Is it " ++ name ++ "? ")
   hFlush stdout
-  ans <- getLine
-  if isYes ans
+  yes <- getYesNo
+  if yes
     then do
       putStrLn "Hurray! I won!"
       return (Person name)
@@ -77,8 +81,8 @@ askQuestions (Person name) = do
 askQuestions (Question q yesTree noTree) = do
   putStr (q ++ " ")
   hFlush stdout
-  ans <- getLine
-  if isYes ans
+  yes <- getYesNo
+  if yes
     then do
       newYes <- askQuestions yesTree
       return (Question q newYes noTree)
@@ -106,8 +110,8 @@ play tree = do
   newTree <- askQuestions tree
   putStr "Play again? "
   hFlush stdout
-  ans <- getLine
-  if isYes ans
+  yes <- getYesNo
+  if yes
     then play newTree
     else return newTree
 
