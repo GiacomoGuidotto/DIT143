@@ -12,8 +12,8 @@ jobs:
 
     strategy:
       matrix:
-        ghc: ["9.4.8"]
-        cabal: ["3.10.3.0"]
+        ghc: ["9.6.6"]
+        cabal: ["3.12.1.0"]
         os: [ubuntu-latest, macOS-latest, windows-latest]
         exclude:
           - os: windows-latest

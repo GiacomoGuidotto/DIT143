@@ -19,7 +19,7 @@ library
     hs-source-dirs:   src
     exposed-modules:  Playground,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         random ^>= 1.2,
         hlint >=3.3,
 
@@ -30,7 +30,7 @@ test-suite playground-test
     hs-source-dirs:   test
     main-is:          PlaygroundTest.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         DIT143
 
 -- Lab 1
@@ -41,7 +41,7 @@ library lab1
     hs-source-dirs:   src/Lab1
     exposed-modules:  Lab1,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
 
 test-suite lab1-test
     import:           warnings
@@ -50,7 +50,7 @@ test-suite lab1-test
     hs-source-dirs:   test/Lab1
     main-is:          Lab1Test.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         lab1
 
@@ -64,7 +64,7 @@ library lab2
                       Cards,
                       RunGame,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         random ^>= 1.2,
         QuickCheck >= 2.14,
 
@@ -75,7 +75,7 @@ test-suite lab2-test
     hs-source-dirs:   test/Lab2
     main-is:          Lab2Test.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         lab2
 
@@ -88,7 +88,7 @@ executable blackjack
                       Cards,
                       RunGame,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         random ^>= 1.2,
         QuickCheck >= 2.14,
         lab2,
@@ -101,7 +101,7 @@ library lab3
     hs-source-dirs:   src/Lab3
     exposed-modules:  Sudoku,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
 
 test-suite lab3-test
@@ -111,7 +111,7 @@ test-suite lab3-test
     hs-source-dirs:   test/Lab3
     main-is:          Lab3Test.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         lab3
 
@@ -126,7 +126,7 @@ library lab4
                       Parsing,
                       ThreepennyPages,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         aeson ^>= 2.2.3.0,
         threepenny-gui ^>= 0.9.4.1,
@@ -140,7 +140,7 @@ test-suite lab4-test
     hs-source-dirs:   test/Lab4
     main-is:          Lab4Test.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         template-haskell,
         lab4
@@ -155,7 +155,7 @@ executable calculator
                       Parsing,
                       ThreepennyPages
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         aeson ^>= 2.2.3.0,
         threepenny-gui ^>= 0.9.4.1,
@@ -169,7 +169,7 @@ library lab5
     hs-source-dirs:   src/Lab5
     exposed-modules:  Lab5,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14
 
 test-suite lab5-test
@@ -179,7 +179,7 @@ test-suite lab5-test
     hs-source-dirs:   test/Lab5
     main-is:          Lab5Test.hs
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         lab5
 
@@ -190,6 +190,6 @@ executable guesser
     main-is:          Main.hs
     other-modules:    Lab5,
     build-depends:
-        base ^>= 4.17.2.1,
+        base ^>= 4.18.2.1,
         QuickCheck >= 2.14,
         lab5
